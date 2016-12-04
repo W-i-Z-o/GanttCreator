@@ -52,6 +52,7 @@ public class XmlGenerator {
 
             root.appendChild(this.createElementWithTextNode("ProjectExternallyEdited", "0"));
             root.appendChild(this.createElementWithTextNode("DurationFormat", "5"));
+            root.appendChild(this.createElementWithTextNode("StartDate", c.getSprints().get(0).getIndex().getStart()));
 
             
             Element tasks = doc.createElement("Tasks");
@@ -68,8 +69,10 @@ public class XmlGenerator {
                 task.appendChild(this.createElementWithTextNode("UID", count + ""));
                 task.appendChild(this.createElementWithTextNode("ID", count + ""));
                 task.appendChild(this.createElementWithTextNode("Name", s.getName()));
-                task.appendChild(this.createElementWithTextNode("Manual", "0"));
+                task.appendChild(this.createElementWithTextNode("Manual", "1"));
                 task.appendChild(this.createElementWithTextNode("OutlineLevel", s.getOutlineLvl() + ""));
+                task.appendChild(this.createElementWithTextNode("ManualStart", s.index.getStart()));
+                task.appendChild(this.createElementWithTextNode("ManualFinish", s.index.getEnd()));
 
                 // 2. Sprint and above
                 if (predecessorId > -1) {

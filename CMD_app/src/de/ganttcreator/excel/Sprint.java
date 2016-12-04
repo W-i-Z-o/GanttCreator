@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Sprint extends Item implements Comparable<Sprint> {
     private List<Phase> phases;
-    int index;
+    LegalSprints index;
 
     public Sprint(int id, String name, List<Phase> phases) {
         this.setId(id);
         this.setName(name);
         this.setOutlineLvl(1);
         this.setPhases(phases);
-        this.setIndex(LegalSprints.valueOf(name.replaceAll(" #", "").toUpperCase()).ordinal());
+        this.setIndex(LegalSprints.valueOf(name.replaceAll(" #", "").toUpperCase()));
     }
 
     public Sprint(String name) {
@@ -40,14 +40,14 @@ public class Sprint extends Item implements Comparable<Sprint> {
 
     @Override
     public int compareTo(Sprint o) {
-        return this.index - o.index;
+        return this.index.ordinal() - o.index.ordinal();
     }
 
-    public int getIndex() {
+    public LegalSprints getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(LegalSprints index) {
         this.index = index;
     }
 
