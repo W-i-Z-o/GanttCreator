@@ -147,6 +147,8 @@ public class Converter {
             // out = new FileOutputStream(myFile);
             // wb.write(out);
             // out.close();
+            XmlGenerator xml = new XmlGenerator(this);
+            xml.generateXml();
             wb.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
