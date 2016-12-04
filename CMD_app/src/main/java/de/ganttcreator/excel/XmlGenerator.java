@@ -171,6 +171,8 @@ public class XmlGenerator {
                 resource.appendChild(this.createElementWithTextNode("UID", id + ""));
                 resource.appendChild(this.createElementWithTextNode("ID", id + ""));
                 resource.appendChild(this.createElementWithTextNode("Name", r));
+                resource.appendChild(this.createElementWithTextNode("Type", "1"));
+                resource.appendChild(this.createElementWithTextNode("MaxUnits", "1.00"));
                 resources.appendChild(resource);
             }
 
