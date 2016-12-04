@@ -3,14 +3,16 @@ package de.ganttcreator.excel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Phase extends Item {
+public class Phase extends Item implements Comparable<Phase> {
     private List<Task> tasks;
+    private int index;
 
     public Phase(int id, String name, List<Task> task) {
         this.setId(id);
         this.setName(name);
         this.setOutlineLvl(2);
         this.setTasks(task);
+        this.setIndex(LegalPhases.valueOf(name.toUpperCase()).ordinal());
     }
 
     public Phase(String name) {
@@ -25,6 +27,14 @@ public class Phase extends Item {
         this.tasks = tasks;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -34,5 +44,10 @@ public class Phase extends Item {
 
         Phase that = (Phase) o;
         return this.getName().equals(that.getName());
+    }
+
+    @Override
+    public int compareTo(Phase o) {
+        return this.index - o.index;
     }
 }

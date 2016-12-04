@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -76,6 +77,7 @@ public class Converter {
 
     public void convertData() {
         List<Phase> phases = new ArrayList<Phase>();
+
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
             String cell, sprint, labels, type, summary, key;
             long origEst;
@@ -85,8 +87,20 @@ public class Converter {
             key = sheet.getRow(i).getCell(colKey).toString();
             origEst = (long) sheet.getRow(i).getCell(colOrigEstimate).getNumericCellValue();
 
+            boolean legalSprintAndLabel = false;
 
-            if (!sprint.isEmpty() && !labels.isEmpty()) {
+            // TODO: Tasks über mehrere Sprints, mit mehrern Labels werden
+            // ignoriert
+
+            try {
+                LegalSprints.valueOf(sprint.replaceAll(" #", "").toUpperCase()).ordinal();
+                LegalPhases.valueOf(labels.toUpperCase()).ordinal();
+                legalSprintAndLabel = true;
+            } catch (IllegalArgumentException e) {
+
+            }
+
+            if (legalSprintAndLabel) {
                 // handle Sprint informations
                 Sprint s = new Sprint(sprint);
                 if (!sprints.contains(s)) {
@@ -125,10 +139,13 @@ public class Converter {
             }
         }
 
+        Collections.sort(sprints);
+
         System.out.println("--- Sprints:");
 
         for (Sprint s : sprints) {
             System.out.println(s.getName());
+            Collections.sort(s.getPhases());
 
             for (Phase p : s.getPhases()) {
                 System.out.println("     " + p.getName());
