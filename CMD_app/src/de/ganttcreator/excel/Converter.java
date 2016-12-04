@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -14,10 +16,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class Converter {
     private File myFile;
     private int rowHead;
-    private int colSprint, colLabels, colType, colSummary, colOrigEstimate, colKey;
+    private int colSprint, colLabels, colType, colSummary, colOrigEstimate, colKey, colLinkedIssues;
     private List<Sprint> sprints;
     private HSSFWorkbook wb;
     private HSSFSheet sheet;
+    private Map<String, Integer> taskToId = new HashMap<String, Integer>();
 
     public Converter(File myFile, int rowHead, List<Sprint> sprints) {
         this.setMyFile(myFile);
@@ -45,7 +48,6 @@ public class Converter {
             in.close();
             sheet = wb.getSheetAt(0);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -71,15 +73,18 @@ public class Converter {
             case "Key":
                 colKey = i;
                 break;
+            case "Linked Issues":
+                colLinkedIssues = i;
             }
         }
     }
 
     public void convertData() {
-        List<Phase> phases = new ArrayList<Phase>();
+        boolean legalSprintAndLabel;
 
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
             String cell, sprint, labels, type, summary, key;
+            String[] linkedIssues;
             long origEst;
             labels = sheet.getRow(i).getCell(colLabels).toString();
             sprint = sheet.getRow(i).getCell(colSprint).toString();
@@ -87,7 +92,16 @@ public class Converter {
             key = sheet.getRow(i).getCell(colKey).toString();
             origEst = (long) sheet.getRow(i).getCell(colOrigEstimate).getNumericCellValue();
 
-            boolean legalSprintAndLabel = false;
+            // This is useless, because you cant find out how it is
+            // linked:
+            // related, blocked, ect...
+            String li = sheet.getRow(i).getCell(colLinkedIssues).toString();
+            if (!li.equals("")) {
+                linkedIssues = li.split(", ");
+
+            } else {
+                linkedIssues = new String[0];
+            }
 
             // TODO: Tasks über mehrere Sprints, mit mehrern Labels werden
             // ignoriert
@@ -97,7 +111,7 @@ public class Converter {
                 LegalPhases.valueOf(labels.toUpperCase()).ordinal();
                 legalSprintAndLabel = true;
             } catch (IllegalArgumentException e) {
-
+                legalSprintAndLabel = false;
             }
 
             if (legalSprintAndLabel) {
@@ -114,7 +128,7 @@ public class Converter {
                     s.getPhases().add(p);
                 }
 
-                // handle Phase Informations
+                // handle Task Informations
                 // switch-Statement is to fix our fucke up first Sprint
                 // normally you just use origEst from Jira
 
@@ -132,26 +146,43 @@ public class Converter {
                     origEst = 120 * 60;
                     break;
                 }
+
                 p = s.getPhases().get(s.getPhases().indexOf(p));
                 Task t = new Task(key, summary, Duration.ofSeconds(origEst));
-                p.getTasks().add(t);
 
+                if (!linkedIssues.equals("")) {
+                    for (String issue : linkedIssues) {
+                        t.getLinkedTasks().add(issue);
+                    }
+
+                    p.getTasks().add(t);
+                }
             }
         }
 
-        Collections.sort(sprints);
-
+        // Sort and allocate IDs for further use in XML
         System.out.println("--- Sprints:");
 
+        int count = 0;
+        Collections.sort(sprints);
         for (Sprint s : sprints) {
             System.out.println(s.getName());
+
+            count++;
+            s.setId(count);
             Collections.sort(s.getPhases());
 
             for (Phase p : s.getPhases()) {
                 System.out.println("     " + p.getName());
-                
-                    for(Task t : p.getTasks()){
-                    System.out.println("          " + t.getName() + ", " + t.getDuration());
+                count++;
+                p.setId(count);
+                for (Task t : p.getTasks()) {
+                    System.out.println(
+                            "          " + t.getName() + ", " + t.getDuration() + ", linked: "
+                                    + t.getLinkedTasks().size() + t.getLinkedTasks());
+                    count++;
+                    t.setId(count);
+                    taskToId.put(t.getKey(), t.getId());
                 }
             }
         }
@@ -245,6 +276,14 @@ public class Converter {
 
     public void setSprints(List<Sprint> sprints) {
         this.sprints = sprints;
+    }
+
+    public Map<String, Integer> getTaskToId() {
+        return taskToId;
+    }
+
+    public void setTaskToId(Map<String, Integer> taskToId) {
+        this.taskToId = taskToId;
     }
 
 }

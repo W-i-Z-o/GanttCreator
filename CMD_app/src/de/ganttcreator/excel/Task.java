@@ -1,17 +1,22 @@
 package de.ganttcreator.excel;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Task extends Item {
-    Duration duration;
-    String key;
+    private Duration duration;
+    private String key;
+    private List<String> linkedTasks;
 
     public Task(int id, String key, String name, int outlineLvl, Duration duration) {
         this.setId(id);
         this.setKey(key);
         this.setName(name);
         this.setOutlineLvl(outlineLvl);
-        this.duration = duration;
+        this.setDuration(duration);
+        this.setLinkedTasks(new ArrayList<String>());
+
     }
     
     public Task(int id, String key, String name, int outlineLvl) {
@@ -45,4 +50,13 @@ public class Task extends Item {
     public void setKey(String key) {
         this.key = key;
     }
+
+    public List<String> getLinkedTasks() {
+        return linkedTasks;
+    }
+
+    public void setLinkedTasks(List<String> linkedTasks) {
+        this.linkedTasks = linkedTasks;
+    }
+
 }

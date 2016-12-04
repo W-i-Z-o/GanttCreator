@@ -53,12 +53,13 @@ public class XmlGenerator {
             root.appendChild(this.createElementWithTextNode("ProjectExternallyEdited", "0"));
             root.appendChild(this.createElementWithTextNode("DurationFormat", "5"));
 
-            int count=0;
             
             Element tasks = doc.createElement("Tasks");
             
             Element task;
             Element predecessor;
+            
+            int count = 0;
             int predecessorId = -1;
 
             for(Sprint s : c.getSprints()){
@@ -95,7 +96,9 @@ public class XmlGenerator {
 
                     for (Task t : p.getTasks()) {
                         count++;
+                        
                         task = doc.createElement("Task");
+                        task.setAttribute("key", t.getKey());
                         task.appendChild(this.createElementWithTextNode("UID", count + ""));
                         task.appendChild(this.createElementWithTextNode("ID", count + ""));
                         task.appendChild(this.createElementWithTextNode("Name", t.getName()));
@@ -105,13 +108,26 @@ public class XmlGenerator {
                         task.appendChild(this.createElementWithTextNode("Estimated", "0"));
 
                         tasks.appendChild(task);
+                        
+                        // If exists define predecessors
+
+                        // This is useless, because you cant find out how it is
+                        // linked:
+                        // related, blocked, ect...
+
+                        // for (String lt : t.getLinkedTasks()) {
+                        // predecessor = doc.createElement("PredecessorLink");
+                        // predecessor.appendChild(
+                        // this.createElementWithTextNode("PredecessorUID",
+                        // c.getTaskToId().get(lt) + ""));
+                        //
+                        // task.appendChild(predecessor);
+                        // }
+
+                        
                     }
                 }
             }
-            
-            
-            
-            
             
             root.appendChild(tasks);
             
