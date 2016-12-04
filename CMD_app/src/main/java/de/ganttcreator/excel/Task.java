@@ -41,6 +41,14 @@ public class Task extends Item {
         return String.format("PT%dH%dM%dS", h, m, s);
     }
 
+    public String splitDuration(int x) {
+        long seconds = duration.getSeconds() / x;
+        long s = seconds % 60;
+        long m = (seconds / 60) % 60;
+        long h = (seconds / (60 * 60)) % 24;
+        return String.format("PT%dH%dM%dS", h, m, s);
+    }
+
     public String getKey() {
         return key;
     }

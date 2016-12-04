@@ -129,16 +129,36 @@ public class XmlGenerator {
                         //
                         // task.appendChild(predecessor);
                         // }
-                        countAssignment++;
-                        assignment = doc.createElement("Assignment");
-                        assignment.appendChild(this.createElementWithTextNode("UID", countAssignment + ""));
-                        assignment.appendChild(this.createElementWithTextNode("TaskUID", countTask + ""));
-                        assignment.appendChild(this.createElementWithTextNode("ResourceUID", t.getAssignee() + ""));
-                        assignment.appendChild(this.createElementWithTextNode("RemainingWork", t.getDurationString()));
-                        assignment.appendChild(this.createElementWithTextNode("Units", "1"));
-                        assignment.appendChild(this.createElementWithTextNode("Work", t.getDurationString()));
                         
-                        assignments.appendChild(assignment);
+                        if (t.getAssignee() > 1) {
+                            countAssignment++;
+                            assignment = doc.createElement("Assignment");
+                            assignment.appendChild(this.createElementWithTextNode("UID", countAssignment + ""));
+                            assignment.appendChild(this.createElementWithTextNode("TaskUID", countTask + ""));
+                            assignment.appendChild(this.createElementWithTextNode("ResourceUID", t.getAssignee() + ""));
+                            assignment.appendChild(
+                                    this.createElementWithTextNode("RemainingWork", t.getDurationString()));
+                            assignment.appendChild(this.createElementWithTextNode("Units", "1"));
+                            assignment.appendChild(this.createElementWithTextNode("Work", t.getDurationString()));
+
+                            assignments.appendChild(assignment);
+                        } else {
+                            for (int i = 1; i < c.getAssignees().size(); i++) {
+                                countAssignment++;
+                                assignment = doc.createElement("Assignment");
+                                assignment.appendChild(this.createElementWithTextNode("UID", countAssignment + ""));
+                                assignment.appendChild(this.createElementWithTextNode("TaskUID", countTask + ""));
+                                assignment.appendChild(this.createElementWithTextNode("ResourceUID", (i + 1) + ""));
+                                assignment.appendChild(
+                                        this.createElementWithTextNode("RemainingWork", t.getDurationString()));
+                                assignment.appendChild(this.createElementWithTextNode("Units", "1"));
+                                assignment.appendChild(this.createElementWithTextNode("Work",
+                                        t.splitDuration(c.getAssignees().size() - 1)));
+
+                                assignments.appendChild(assignment);
+                            }
+                        }
+                        
                     }
                 }
             }

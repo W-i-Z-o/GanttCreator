@@ -85,7 +85,7 @@ public class Converter {
     }
 
     public void convertData() {
-
+        assignees.add("Unassigned");
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
             String sprint, labels, summary, key, assignee;
             String[] linkedIssues;
@@ -231,7 +231,7 @@ public class Converter {
             e.printStackTrace();
         }
 
-        System.out.println("--- finish");
+        System.out.println("--- finish" + assignees);
     }
 
     public static void main(String[] args) throws IOException {
