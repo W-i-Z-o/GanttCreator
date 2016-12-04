@@ -27,4 +27,12 @@ public class Task extends Item {
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
+
+    public String getDurationString() {
+        long seconds = duration.getSeconds();
+        long s = seconds % 60;
+        long m = (seconds / 60) % 60;
+        long h = (seconds / (60 * 60)) % 24;
+        return String.format("PT%dH%dM%dS", h, m, s);
+    }
 }
