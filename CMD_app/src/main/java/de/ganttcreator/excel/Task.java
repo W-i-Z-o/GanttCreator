@@ -8,23 +8,21 @@ public class Task extends Item {
     private Duration duration;
     private String key;
     private List<String> linkedTasks;
+    private int assignee;
 
-    public Task(int id, String key, String name, int outlineLvl, Duration duration) {
+    public Task(int id, String key, String name, int outlineLvl, Duration duration, int assignee) {
         this.setId(id);
         this.setKey(key);
         this.setName(name);
         this.setOutlineLvl(outlineLvl);
         this.setDuration(duration);
         this.setLinkedTasks(new ArrayList<String>());
+        this.setAssignee(assignee);
 
     }
     
-    public Task(int id, String key, String name, int outlineLvl) {
-        this(id, key, name, outlineLvl, null);
-    }
-
-    public Task(String key, String name, Duration duration) {
-        this(-1, key, name, 3, duration);
+    public Task(String key, String name, Duration duration, int assignee) {
+        this(-1, key, name, 3, duration, assignee);
     }
 
     public Duration getDuration() {
@@ -57,6 +55,14 @@ public class Task extends Item {
 
     public void setLinkedTasks(List<String> linkedTasks) {
         this.linkedTasks = linkedTasks;
+    }
+
+    public int getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(int assignee) {
+        this.assignee = assignee;
     }
 
 }

@@ -48,18 +48,20 @@ public class XmlGenerator {
             root.setAttribute("xmlns", "http://schemas.microsoft.com/project");
             doc.appendChild(root);
 
-            Element e;
-
             root.appendChild(this.createElementWithTextNode("ProjectExternallyEdited", "0"));
             root.appendChild(this.createElementWithTextNode("DurationFormat", "5"));
             root.appendChild(this.createElementWithTextNode("StartDate", c.getSprints().get(0).getIndex().getStart()));
 
             
             Element tasks = doc.createElement("Tasks");
-            
             Element task;
+            
+            Element assignments = doc.createElement("Assignments");
+            Element assignment;
+
             Element predecessor;
             
+
             int countTask = 0;
             int countAssignment = 0;
             int predecessorId = -1;
@@ -127,14 +129,34 @@ public class XmlGenerator {
                         //
                         // task.appendChild(predecessor);
                         // }
-
+                        countAssignment++;
+                        assignment = doc.createElement("Assignment");
+                        assignment.appendChild(this.createElementWithTextNode("UID", countAssignment + ""));
+                        assignment.appendChild(this.createElementWithTextNode("TaskUID", countTask + ""));
+                        assignment.appendChild(this.createElementWithTextNode("ResourceUID", t.getAssignee() + ""));
+                        assignment.appendChild(this.createElementWithTextNode("RemainingWork", t.getDurationString()));
+                        assignment.appendChild(this.createElementWithTextNode("Units", "1"));
+                        assignment.appendChild(this.createElementWithTextNode("Work", t.getDurationString()));
                         
+                        assignments.appendChild(assignment);
                     }
                 }
             }
             
+            Element resources = doc.createElement("Resources");
+            Element resource;
+            for (String r : c.getAssignees()){
+                resource = doc.createElement("Resource");
+                int id = c.getAssignees().indexOf(r) + 1;
+                resource.appendChild(this.createElementWithTextNode("UID", id + ""));
+                resource.appendChild(this.createElementWithTextNode("ID", id + ""));
+                resource.appendChild(this.createElementWithTextNode("Name", r));
+                resources.appendChild(resource);
+            }
+
             root.appendChild(tasks);
-            
+            root.appendChild(resources);
+            root.appendChild(assignments);
             // XML-Output
             TransformerFactory tFactory = TransformerFactory.newInstance();
 

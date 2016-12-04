@@ -16,8 +16,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class Converter {
     private File myFile;
     private int rowHead;
-    private int colSprint, colLabels, colType, colSummary, colOrigEstimate, colKey, colLinkedIssues;
+    private int colSprint, colLabels, colType, colSummary, colOrigEstimate, colKey, colLinkedIssues, colAssignee;
     private List<Sprint> sprints;
+    private List<String> assignees = new ArrayList<String>();
     private HSSFWorkbook wb;
     private HSSFSheet sheet;
     private Map<String, Integer> taskToId = new HashMap<String, Integer>();
@@ -75,6 +76,10 @@ public class Converter {
                 break;
             case "Linked Issues":
                 colLinkedIssues = i;
+                break;
+            case "Assignee":
+                colAssignee = i;
+                break;
             }
         }
     }
@@ -82,7 +87,7 @@ public class Converter {
     public void convertData() {
 
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
-            String sprint, labels, summary, key;
+            String sprint, labels, summary, key, assignee;
             String[] linkedIssues;
             long origEst;
             labels = sheet.getRow(i).getCell(colLabels).toString();
@@ -90,6 +95,13 @@ public class Converter {
             summary = sheet.getRow(i).getCell(colSummary).toString();
             key = sheet.getRow(i).getCell(colKey).toString();
             origEst = (long) sheet.getRow(i).getCell(colOrigEstimate).getNumericCellValue();
+
+            assignee = sheet.getRow(i).getCell(colAssignee).toString();
+
+            if (!assignees.contains(assignee)) {
+                assignees.add(assignee);
+            }
+
             LegalPhases lPhase = null;
             LegalSprints lSprint = null;
 
@@ -164,7 +176,7 @@ public class Converter {
                 }
 
                 p = s.getPhases().get(s.getPhases().indexOf(p));
-                Task t = new Task(key, summary, Duration.ofSeconds(origEst));
+                Task t = new Task(key, summary, Duration.ofSeconds(origEst), assignees.indexOf(assignee) + 1);
 
                 if (!linkedIssues.equals("")) {
                     for (String issue : linkedIssues) {
@@ -300,6 +312,22 @@ public class Converter {
 
     public void setTaskToId(Map<String, Integer> taskToId) {
         this.taskToId = taskToId;
+    }
+
+    public int getColAssignee() {
+        return colAssignee;
+    }
+
+    public void setColAssignee(int colAssignee) {
+        this.colAssignee = colAssignee;
+    }
+
+    public List<String> getAssignees() {
+        return assignees;
+    }
+
+    public void setAssignees(List<String> assignees) {
+        this.assignees = assignees;
     }
 
 }
