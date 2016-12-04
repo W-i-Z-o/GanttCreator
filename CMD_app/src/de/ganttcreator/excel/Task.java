@@ -16,6 +16,10 @@ public class Task extends Item {
         this(id,name,outlineLvl,null);
     }
 
+    public Task(String name, Duration duration) {
+        this(-1, name, 3, duration);
+    }
+
     public Duration getDuration() {
         return duration;
     }

@@ -3,6 +3,7 @@ package de.ganttcreator.excel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,30 +80,31 @@ public class Converter {
     public void convertData() {
         List<Phase> phases = new ArrayList<Phase>();
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
-            String cell;
+            String cell, sprint, labels, type, summary;
+            long origEst;
+            labels = sheet.getRow(i).getCell(colLabels).toString();
+            sprint = sheet.getRow(i).getCell(colSprint).toString();
+            summary = sheet.getRow(i).getCell(colSummary).toString();
+            origEst = (long) sheet.getRow(i).getCell(colOrigEstimate).getNumericCellValue();
 
-            // read Phases
-            cell = sheet.getRow(i).getCell(colLabels).toString();
-            switch (cell) {
-            case "":
-                break;
-            default:
-                Phase p = new Phase(cell);
-                if (!phases.contains(p)) {
-                    phases.add(p);
-                }
-            }
-
-            // read Sprints
-            cell = sheet.getRow(i).getCell(colSprint).toString();
-            switch (cell) {
-            case "":
-                break;
-            default:
-                Sprint s = new Sprint(cell);
+            if (!sprint.isEmpty() && !labels.isEmpty()) {
+                // handle Sprint informations
+                Sprint s = new Sprint(sprint);
                 if (!sprints.contains(s)) {
                     sprints.add(s);
                 }
+                s = sprints.get(sprints.indexOf(s));
+
+                // handle Phase informations
+                Phase p = new Phase(labels);
+                if (!s.getPhases().contains(p)) {
+                    s.getPhases().add(p);
+                }
+                p = s.getPhases().get(s.getPhases().indexOf(p));
+                // Task t = new Task(summary, Duration.ofMinutes(60));
+                Task t = new Task(summary, Duration.ofSeconds(origEst));
+                p.getTasks().add(t);
+
             }
         }
 
@@ -110,12 +112,14 @@ public class Converter {
 
         for (Sprint s : sprints) {
             System.out.println(s.getName());
-        }
 
-        System.out.println("--- Phases:");
-
-        for (Phase p : phases) {
-            System.out.println(p.getName());
+            for (Phase p : s.getPhases()) {
+                System.out.println("     " + p.getName());
+                
+                    for(Task t : p.getTasks()){
+                    System.out.println("          " + t.getName() + ", " + t.getDuration());
+                    }
+            }
         }
     }
 

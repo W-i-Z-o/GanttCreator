@@ -10,15 +10,11 @@ public class Sprint extends Item {
         this.setId(id);
         this.setName(name);
         this.setOutlineLvl(1);
-        phases = new ArrayList<Phase>();
+        this.setPhases(phases);
     }
 
     public Sprint(String name) {
-        this(-1, name, null);
-    }
-
-    public Sprint(String name, List<Phase> phases) {
-        this(-1, name, phases);
+        this(-1, name, new ArrayList<Phase>());
     }
 
     public List<Phase> getPhases() {

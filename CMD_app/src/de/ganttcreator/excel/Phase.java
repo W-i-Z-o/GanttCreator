@@ -6,15 +6,15 @@ import java.util.List;
 public class Phase extends Item {
     private List<Task> tasks;
 
-    public Phase(int id, String name) {
+    public Phase(int id, String name, List<Task> task) {
         this.setId(id);
         this.setName(name);
         this.setOutlineLvl(2);
-        tasks = new ArrayList<Task>();
+        this.setTasks(task);
     }
 
     public Phase(String name) {
-        this(-1, name);
+        this(-1, name, new ArrayList<Task>());
     }
 
     public List<Task> getTasks() {
