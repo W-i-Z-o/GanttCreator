@@ -1,10 +1,10 @@
 package de.ganttcreator.excel;
 
 public enum LegalPhases {
-    BUSINESS_MODELLING("Business Modelling"), REQUIREMENTS("Requirements"), DESIGN("Design"), IMPLEMENTATION(
+    BUSINESS_MODELLING("Business_Modelling"), REQUIREMENTS("Requirements"), DESIGN("Design"), IMPLEMENTATION(
             "Implementation"), TESTING("Testing"), DEPLOYMENT("Deployment"), CONFIGURATION_CHANGE_MANAGEMENT(
                     "Configuration & Change Management"), PROJECT_MANAGMENT(
-                            "Project Managment"), ENVIRONMENT("Environment"), DOCUMENTATION("Documentation");
+                            "Project_Managment"), ENVIRONMENT("Environment"), DOCUMENTATION("Documentation");
 
     private final String name;
 
@@ -15,5 +15,9 @@ public enum LegalPhases {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

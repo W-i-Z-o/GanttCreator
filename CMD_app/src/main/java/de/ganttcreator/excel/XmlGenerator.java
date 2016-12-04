@@ -60,14 +60,15 @@ public class XmlGenerator {
             Element task;
             Element predecessor;
             
-            int count = 0;
+            int countTask = 0;
+            int countAssignment = 0;
             int predecessorId = -1;
 
             for(Sprint s : c.getSprints()){
-                count++;
+                countTask++;
                 task = doc.createElement("Task");
-                task.appendChild(this.createElementWithTextNode("UID", count + ""));
-                task.appendChild(this.createElementWithTextNode("ID", count + ""));
+                task.appendChild(this.createElementWithTextNode("UID", countTask + ""));
+                task.appendChild(this.createElementWithTextNode("ID", countTask + ""));
                 task.appendChild(this.createElementWithTextNode("Name", s.getName()));
                 task.appendChild(this.createElementWithTextNode("Manual", "1"));
                 task.appendChild(this.createElementWithTextNode("OutlineLevel", s.getOutlineLvl() + ""));
@@ -82,15 +83,15 @@ public class XmlGenerator {
                     task.appendChild(predecessor);
 
                 }
-                predecessorId = count;
+                predecessorId = countTask;
 
                 tasks.appendChild(task);
 
                 for (Phase p : s.getPhases()) {
-                    count++;
+                    countTask++;
                     task = doc.createElement("Task");
-                    task.appendChild(this.createElementWithTextNode("UID", count + ""));
-                    task.appendChild(this.createElementWithTextNode("ID", count + ""));
+                    task.appendChild(this.createElementWithTextNode("UID", countTask + ""));
+                    task.appendChild(this.createElementWithTextNode("ID", countTask + ""));
                     task.appendChild(this.createElementWithTextNode("Name", p.getName()));
                     task.appendChild(this.createElementWithTextNode("Manual", "0"));
                     task.appendChild(this.createElementWithTextNode("OutlineLevel", p.getOutlineLvl() + ""));
@@ -98,12 +99,12 @@ public class XmlGenerator {
                     tasks.appendChild(task);
 
                     for (Task t : p.getTasks()) {
-                        count++;
+                        countTask++;
                         
                         task = doc.createElement("Task");
                         task.setAttribute("key", t.getKey());
-                        task.appendChild(this.createElementWithTextNode("UID", count + ""));
-                        task.appendChild(this.createElementWithTextNode("ID", count + ""));
+                        task.appendChild(this.createElementWithTextNode("UID", countTask + ""));
+                        task.appendChild(this.createElementWithTextNode("ID", countTask + ""));
                         task.appendChild(this.createElementWithTextNode("Name", t.getName()));
                         task.appendChild(this.createElementWithTextNode("Manual", "0"));
                         task.appendChild(this.createElementWithTextNode("OutlineLevel", t.getOutlineLvl() + ""));

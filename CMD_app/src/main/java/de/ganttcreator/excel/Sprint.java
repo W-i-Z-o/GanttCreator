@@ -7,16 +7,16 @@ public class Sprint extends Item implements Comparable<Sprint> {
     private List<Phase> phases;
     LegalSprints index;
 
-    public Sprint(int id, String name, List<Phase> phases) {
+    public Sprint(int id, String name, List<Phase> phases, LegalSprints index) {
         this.setId(id);
         this.setName(name);
         this.setOutlineLvl(1);
         this.setPhases(phases);
-        this.setIndex(LegalSprints.valueOf(name.replaceAll(" #", "").toUpperCase()));
+        this.setIndex(index);
     }
 
-    public Sprint(String name) {
-        this(-1, name, new ArrayList<Phase>());
+    public Sprint(String name, LegalSprints index) {
+        this(-1, name, new ArrayList<Phase>(), index);
     }
 
     public List<Phase> getPhases() {

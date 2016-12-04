@@ -80,10 +80,9 @@ public class Converter {
     }
 
     public void convertData() {
-        boolean legalSprintAndLabel;
 
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
-            String cell, sprint, labels, type, summary, key;
+            String sprint, labels, summary, key;
             String[] linkedIssues;
             long origEst;
             labels = sheet.getRow(i).getCell(colLabels).toString();
@@ -91,6 +90,8 @@ public class Converter {
             summary = sheet.getRow(i).getCell(colSummary).toString();
             key = sheet.getRow(i).getCell(colKey).toString();
             origEst = (long) sheet.getRow(i).getCell(colOrigEstimate).getNumericCellValue();
+            LegalPhases lPhase = null;
+            LegalSprints lSprint = null;
 
             // This is useless, because you cant find out how it is
             // linked:
@@ -105,25 +106,40 @@ public class Converter {
 
             // TODO: Tasks über mehrere Sprints, mit mehrern Labels werden
             // ignoriert
+            
+            boolean legalSprintAndLabel = false;
 
-            try {
-                LegalSprints.valueOf(sprint.replaceAll(" #", "").toUpperCase()).ordinal();
-                LegalPhases.valueOf(labels.toUpperCase()).ordinal();
-                legalSprintAndLabel = true;
-            } catch (IllegalArgumentException e) {
+            if (!sprint.isEmpty() && !labels.isEmpty()) {
+                for (LegalSprints ls : LegalSprints.values()) {
+                    if (ls.getName().equals(sprint)) {
+                        lSprint = ls;
+
+                        for (LegalPhases lp : LegalPhases.values()) {
+                            if (lp.getName().equals(labels)) {
+                                lPhase = lp;
+                                legalSprintAndLabel = true;
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+            } else {
                 legalSprintAndLabel = false;
             }
 
             if (legalSprintAndLabel) {
                 // handle Sprint informations
-                Sprint s = new Sprint(sprint);
+                Sprint s = new Sprint(sprint, lSprint);
                 if (!sprints.contains(s)) {
                     sprints.add(s);
                 }
                 s = sprints.get(sprints.indexOf(s));
 
                 // handle Phase informations
-                Phase p = new Phase(labels);
+                Phase p = new Phase(labels, lPhase);
                 if (!s.getPhases().contains(p)) {
                     s.getPhases().add(p);
                 }

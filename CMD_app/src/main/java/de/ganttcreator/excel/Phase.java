@@ -5,18 +5,18 @@ import java.util.List;
 
 public class Phase extends Item implements Comparable<Phase> {
     private List<Task> tasks;
-    private int index;
+    private LegalPhases index;
 
-    public Phase(int id, String name, List<Task> task) {
+    public Phase(int id, String name, List<Task> task, LegalPhases index) {
         this.setId(id);
         this.setName(name);
         this.setOutlineLvl(2);
         this.setTasks(task);
-        this.setIndex(LegalPhases.valueOf(name.toUpperCase()).ordinal());
+        this.setIndex(index);
     }
 
-    public Phase(String name) {
-        this(-1, name, new ArrayList<Task>());
+    public Phase(String name, LegalPhases index) {
+        this(-1, name, new ArrayList<Task>(), index);
     }
 
     public List<Task> getTasks() {
@@ -27,11 +27,11 @@ public class Phase extends Item implements Comparable<Phase> {
         this.tasks = tasks;
     }
 
-    public int getIndex() {
+    public LegalPhases getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(LegalPhases index) {
         this.index = index;
     }
 
@@ -48,6 +48,6 @@ public class Phase extends Item implements Comparable<Phase> {
 
     @Override
     public int compareTo(Phase o) {
-        return this.index - o.index;
+        return this.index.ordinal() - o.index.ordinal();
     }
 }

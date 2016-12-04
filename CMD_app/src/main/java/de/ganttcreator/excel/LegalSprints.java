@@ -31,4 +31,8 @@ public enum LegalSprints {
         return end;
     }
 
+    public String getName() {
+        return name;
+    }
+
 }
