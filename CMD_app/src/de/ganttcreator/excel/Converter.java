@@ -13,27 +13,21 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class Converter {
     private File myFile;
     private int rowHead;
-    private int colSprint, colLabels, colType, colSummary, colOrigEstimate;
+    private int colSprint, colLabels, colType, colSummary, colOrigEstimate, colKey;
     private List<Sprint> sprints;
     private HSSFWorkbook wb;
     private HSSFSheet sheet;
 
-    public Converter(File myFile, int rowHead, int colSprint, int colLabels, int colType, int colSummary,
-            int colOrigEstimate, List<Sprint> sprints) {
+    public Converter(File myFile, int rowHead, List<Sprint> sprints) {
         this.setMyFile(myFile);
         this.setRowHead(rowHead);
-        this.setColSprint(colSprint);
-        this.setColLabels(colLabels);
-        this.setColType(colType);
-        this.setColSummary(colSummary);
-        this.setColOrigEstimate(colOrigEstimate);
         this.setSprints(sprints);
 
         this.initConverting();
     }
 
     public Converter(File myFile, int rowHead) {
-        this(myFile, rowHead, -1, -1, -1, -1, -1, new ArrayList<Sprint>());
+        this(myFile, rowHead, new ArrayList<Sprint>());
     }
     
     public void doConverting() {
@@ -73,6 +67,9 @@ public class Converter {
             case "Original Estimate":
                 colOrigEstimate = i;
                 break;
+            case "Key":
+                colKey = i;
+                break;
             }
         }
     }
@@ -80,12 +77,14 @@ public class Converter {
     public void convertData() {
         List<Phase> phases = new ArrayList<Phase>();
         for (int i = rowHead + 1; i < sheet.getLastRowNum() - 1; i++) {
-            String cell, sprint, labels, type, summary;
+            String cell, sprint, labels, type, summary, key;
             long origEst;
             labels = sheet.getRow(i).getCell(colLabels).toString();
             sprint = sheet.getRow(i).getCell(colSprint).toString();
             summary = sheet.getRow(i).getCell(colSummary).toString();
+            key = sheet.getRow(i).getCell(colKey).toString();
             origEst = (long) sheet.getRow(i).getCell(colOrigEstimate).getNumericCellValue();
+
 
             if (!sprint.isEmpty() && !labels.isEmpty()) {
                 // handle Sprint informations
@@ -100,8 +99,26 @@ public class Converter {
                 if (!s.getPhases().contains(p)) {
                     s.getPhases().add(p);
                 }
+
+                // handle Phase Informations
+                // switch-Statement is to fix our fucke up first Sprint
+                // normally you just use origEst from Jira
+
+                switch (key) {
+                case "TESB416-46":
+                    origEst = 30;
+                    break;
+                case "TESB416-47":
+                    origEst = 30;
+                    break;
+                case "TESB416-48":
+                    origEst = 60;
+                    break;
+                case "TESB416-49":
+                    origEst = 120;
+                    break;
+                }
                 p = s.getPhases().get(s.getPhases().indexOf(p));
-                // Task t = new Task(summary, Duration.ofMinutes(60));
                 Task t = new Task(summary, Duration.ofSeconds(origEst));
                 p.getTasks().add(t);
 
@@ -118,7 +135,7 @@ public class Converter {
                 
                     for(Task t : p.getTasks()){
                     System.out.println("          " + t.getName() + ", " + t.getDuration());
-                    }
+                }
             }
         }
     }
@@ -136,7 +153,7 @@ public class Converter {
             e.printStackTrace();
         }
 
-        System.out.println("--- finish ");
+        System.out.println("--- finish");
     }
 
     public static void main(String[] args) throws IOException {
