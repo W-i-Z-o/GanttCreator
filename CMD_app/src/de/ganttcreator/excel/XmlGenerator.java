@@ -58,6 +58,8 @@ public class XmlGenerator {
             Element tasks = doc.createElement("Tasks");
             
             Element task;
+            Element predecessor;
+            int predecessorId = -1;
 
             for(Sprint s : c.getSprints()){
                 count++;
@@ -68,6 +70,15 @@ public class XmlGenerator {
                 task.appendChild(this.createElementWithTextNode("Manual", "0"));
                 task.appendChild(this.createElementWithTextNode("OutlineLevel", s.getOutlineLvl() + ""));
 
+                // 2. Sprint and above
+                if (predecessorId > -1) {
+                    predecessor = doc.createElement("PredecessorLink");
+                    predecessor.appendChild(this.createElementWithTextNode("PredecessorUID", predecessorId + ""));
+
+                    task.appendChild(predecessor);
+
+                }
+                predecessorId = count;
 
                 tasks.appendChild(task);
 

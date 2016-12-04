@@ -106,20 +106,20 @@ public class Converter {
 
                 switch (key) {
                 case "TESB416-46":
-                    origEst = 30;
+                    origEst = 30 * 60;
                     break;
                 case "TESB416-47":
-                    origEst = 30;
+                    origEst = 30 * 60;
                     break;
                 case "TESB416-48":
-                    origEst = 60;
+                    origEst = 60 * 60;
                     break;
                 case "TESB416-49":
-                    origEst = 120;
+                    origEst = 120 * 60;
                     break;
                 }
                 p = s.getPhases().get(s.getPhases().indexOf(p));
-                Task t = new Task(summary, Duration.ofSeconds(origEst));
+                Task t = new Task(key, summary, Duration.ofSeconds(origEst));
                 p.getTasks().add(t);
 
             }
